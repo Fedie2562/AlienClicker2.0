@@ -47,6 +47,7 @@ public class alienClicker2 extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        labelPlace = new javax.swing.JPanel();
         prestigeCountLabel = new javax.swing.JLabel();
         shopButton = new javax.swing.JButton();
         prestige = new javax.swing.JButton();
@@ -82,6 +83,11 @@ public class alienClicker2 extends javax.swing.JFrame {
         setPreferredSize(new java.awt.Dimension(550, 600));
         setResizable(false);
         getContentPane().setLayout(null);
+
+        labelPlace.setOpaque(false);
+        labelPlace.setLayout(new javax.swing.BoxLayout(labelPlace, javax.swing.BoxLayout.LINE_AXIS));
+        getContentPane().add(labelPlace);
+        labelPlace.setBounds(350, 240, 80, 20);
 
         prestigeCountLabel.setVisible(false);
         prestigeCountLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -375,15 +381,16 @@ public class alienClicker2 extends javax.swing.JFrame {
 
     private void clickerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clickerActionPerformed
         JLabel labelC = new JLabel(gain+"+");
+        labelC.setForeground(Color.red);
+        labelPlace.add(labelC);
         labelC.setVisible(true);
+        labelC.setOpaque(true);
         Point mouseXY = new Point();
         PointerInfo xy = MouseInfo.getPointerInfo();
         mouseXY = xy.getLocation();
         System.out.println(mouseXY);
-        labelC.setLocation(mouseXY);
-        labelC.setSize(50, 50);
-        
-        labelC.setForeground(Color.red);
+        labelPlace.setLocation(mouseXY);
+        //labelC.setSize(50, 50);
         credits += gain;
         creditCount.setText("Credits: "+credits);
         System.out.println(credits);
@@ -530,6 +537,7 @@ public class alienClicker2 extends javax.swing.JFrame {
     private javax.swing.JLabel fuelCostLabel;
     private javax.swing.JLabel fuelCount;
     private javax.swing.JButton fuelUpgrade;
+    private javax.swing.JPanel labelPlace;
     private javax.swing.JLabel nukeCount;
     private javax.swing.JButton prestige;
     private javax.swing.JLabel prestigeCountLabel;
