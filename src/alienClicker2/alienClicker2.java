@@ -36,6 +36,7 @@ public class alienClicker2 extends javax.swing.JFrame {
      */
     public alienClicker2() {
         initComponents();
+        droneThread.start();
     }
 
     /**
@@ -362,7 +363,10 @@ public class alienClicker2 extends javax.swing.JFrame {
         @Override
         public void run()
         {
-            
+            while(true){
+                credits+=drones;
+                creditCount.setText("Credits: "+credits);
+            }
         }
     }
     
@@ -388,6 +392,7 @@ public class alienClicker2 extends javax.swing.JFrame {
         Point mouseXY = new Point();
         PointerInfo xy = MouseInfo.getPointerInfo();
         mouseXY = xy.getLocation();
+        mouseXY.translate(-10, -50);
         System.out.println(mouseXY);
         labelPlace.setLocation(mouseXY);
         //labelC.setSize(50, 50);
@@ -400,7 +405,7 @@ public class alienClicker2 extends javax.swing.JFrame {
         // Money over time upgrade
         if(credits >= 1000){
             credits-=1000;
-            droneThread.start();
+            drones++;
             creditCount.setText("Credits: "+credits);
         }
     }//GEN-LAST:event_droneUpgradeActionPerformed
