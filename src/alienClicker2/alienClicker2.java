@@ -1,17 +1,23 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Ferris Dietich
+ * Alien Clicker 2.0
+ * Main feature is saving and loading
  */
 
 package alienClicker2;
 
-import java.awt.Color;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.PointerInfo;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 
 /**
@@ -23,7 +29,7 @@ public class alienClicker2 extends javax.swing.JFrame {
     DroneThread droneThread = new DroneThread();
     int prestigeCost = 1000000;
     int prestigeCount = 0;
-    int credits = 0;
+    long credits = 0;
     int gain = 1;
     int suits = 0;
     int blasters = 0;
@@ -36,7 +42,9 @@ public class alienClicker2 extends javax.swing.JFrame {
      */
     public alienClicker2() {
         initComponents();
+        //Start the drone thread
         droneThread.start();
+        updateCounters();
     }
 
     /**
@@ -48,6 +56,8 @@ public class alienClicker2 extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        saveButton = new javax.swing.JButton();
+        loadButton = new javax.swing.JButton();
         labelPlace = new javax.swing.JPanel();
         prestigeCountLabel = new javax.swing.JLabel();
         shopButton = new javax.swing.JButton();
@@ -84,6 +94,24 @@ public class alienClicker2 extends javax.swing.JFrame {
         setPreferredSize(new java.awt.Dimension(550, 600));
         setResizable(false);
         getContentPane().setLayout(null);
+
+        saveButton.setText("Save");
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
+        getContentPane().add(saveButton);
+        saveButton.setBounds(10, 550, 60, 23);
+
+        loadButton.setText("Load");
+        loadButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadButtonActionPerformed(evt);
+            }
+        });
+        getContentPane().add(loadButton);
+        loadButton.setBounds(100, 550, 60, 23);
 
         labelPlace.setOpaque(false);
         labelPlace.setLayout(new javax.swing.BoxLayout(labelPlace, javax.swing.BoxLayout.LINE_AXIS));
@@ -366,7 +394,13 @@ public class alienClicker2 extends javax.swing.JFrame {
             while(true){
                 credits+=drones;
                 creditCount.setText("Credits: "+credits);
+                sleep(1000);
             }
+        }
+        
+        private void sleep(int i)
+        {
+            try{Thread.sleep(i);}catch(InterruptedException e) {System.out.println(e);}
         }
     }
     
@@ -381,23 +415,14 @@ public class alienClicker2 extends javax.swing.JFrame {
         prestige.setVisible(true);
         prestigeMessage.setVisible(true);
         upgradeCounters.setVisible(false);
+        saveButton.setVisible(false);
+        loadButton.setVisible(false);
     }//GEN-LAST:event_shopButtonActionPerformed
 
     private void clickerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clickerActionPerformed
-        JLabel labelC = new JLabel(gain+"+");
-        labelC.setForeground(Color.red);
-        labelPlace.add(labelC);
-        labelC.setVisible(true);
-        labelC.setOpaque(true);
-        Point mouseXY = new Point();
-        PointerInfo xy = MouseInfo.getPointerInfo();
-        mouseXY = xy.getLocation();
-        mouseXY.translate(-10, -50);
-        System.out.println(mouseXY);
-        labelPlace.setLocation(mouseXY);
-        //labelC.setSize(50, 50);
+        // Main Clicker button on the Aliens face
         credits += gain;
-        creditCount.setText("Credits: "+credits);
+        creditCount.setText("Credits: "+credits+" +"+gain);
         System.out.println(credits);
     }//GEN-LAST:event_clickerActionPerformed
 
@@ -421,6 +446,8 @@ public class alienClicker2 extends javax.swing.JFrame {
         prestige.setVisible(false);
         prestigeMessage.setVisible(false);
         upgradeCounters.setVisible(true);
+        loadButton.setVisible(true);
+        saveButton.setVisible(true);
         updateCounters();
     }//GEN-LAST:event_clickerScreenActionPerformed
 
@@ -467,10 +494,62 @@ public class alienClicker2 extends javax.swing.JFrame {
     private void prestigeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prestigeActionPerformed
         // Prestige system
         if(credits >= prestigeCost){
+            prestigeCount++;
+            prestige();
+        }
+    }//GEN-LAST:event_prestigeActionPerformed
+
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        // Save Button stuff
+        try {
+            PrintStream ps = new PrintStream(new File("saveData.txt"));
+            ps.println(String.valueOf(credits));
+            ps.println(String.valueOf(gain));
+            ps.println(String.valueOf(suits));
+            ps.println(String.valueOf(blasters));
+            ps.println(String.valueOf(nukes));
+            ps.println(String.valueOf(fuel));
+            ps.println(String.valueOf(drones));
+            ps.println(String.valueOf(prestigeCount));
+            ps.println(String.valueOf(prestigeCost));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(alienClicker2.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_saveButtonActionPerformed
+
+    private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
+        // Loading the values from the text file
+        Path path = Paths.get("saveData.txt");
+        try {
+            String[] savedData = Files.lines(path).toArray(String[]::new);
+            for(int i = 0;i < savedData.length;i++){
+                System.out.println(savedData[i]);
+            }
+            //Parsing all the ints to their values
+            prestigeCount = Integer.parseInt(savedData[7]);
+            for (int i = 0; i < prestigeCount; i++)
+            {
+                prestige();
+            }
+            credits = Long.parseLong(savedData[0]);
+            gain = Integer.parseInt(savedData[1]);
+            suits = Integer.parseInt(savedData[2]);
+            blasters = Integer.parseInt(savedData[3]);
+            nukes = Integer.parseInt(savedData[4]);
+            fuel = Integer.parseInt(savedData[5]);
+            drones = Integer.parseInt(savedData[6]);
+            prestigeCost = Integer.parseInt(savedData[8]);
+            updateCounters();
+        } catch (IOException ex) {
+            Logger.getLogger(alienClicker2.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_loadButtonActionPerformed
+    public void prestige()
+    {
             credits=0;
             gain=1;
             gain+=prestigeCount;
-            prestigeCount++;
+            prestigeCost*=2;
             blasters=0;
             fuel=0;
             suits=0;
@@ -480,10 +559,10 @@ public class alienClicker2 extends javax.swing.JFrame {
             creditCount.setText("Credits: "+credits);
             prestigeCountLabel.setVisible(true);
             prestigeCountLabel.setText("Prestige Count= "+prestigeCount);
-        }
-    }//GEN-LAST:event_prestigeActionPerformed
-
+            prestigeMessage.setText("Pay "+prestigeCost+" credits and move to the next star system.");
+    }
     void updateCounters(){
+        //Updates all the counters for the upgrades
         fuelCount.setText("Fuel: "+fuel);
         blasterCount.setText("Blasters: "+blasters);
         suitCount.setText("Suits: "+suits);
@@ -543,10 +622,12 @@ public class alienClicker2 extends javax.swing.JFrame {
     private javax.swing.JLabel fuelCount;
     private javax.swing.JButton fuelUpgrade;
     private javax.swing.JPanel labelPlace;
+    private javax.swing.JButton loadButton;
     private javax.swing.JLabel nukeCount;
     private javax.swing.JButton prestige;
     private javax.swing.JLabel prestigeCountLabel;
     private javax.swing.JLabel prestigeMessage;
+    private javax.swing.JButton saveButton;
     private javax.swing.JButton shopButton;
     private javax.swing.JPanel shopPanel;
     private javax.swing.JPanel shopPanel2;
