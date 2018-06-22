@@ -13,8 +13,6 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -546,6 +544,7 @@ public class alienClicker2 extends javax.swing.JFrame {
     }//GEN-LAST:event_loadButtonActionPerformed
     public void prestige()
     {
+        //Prestige method handles all prestige stuff
             credits=0;
             gain=1;
             gain+=prestigeCount;
